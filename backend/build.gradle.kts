@@ -22,8 +22,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("net.bramp.ffmpeg:ffmpeg:0.8.0")
-	implementation("net.imagej.ij:1.53j")
+	implementation("org.bytedeco:javacv-platform:1.5.10")
+	implementation("net.imagej:ij:1.54i")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
@@ -36,5 +37,6 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
+	maxHeapSize = "4096m"
 	useJUnitPlatform()
 }
