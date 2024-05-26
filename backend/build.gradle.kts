@@ -22,6 +22,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	implementation("org.bytedeco:javacv-platform:1.5.10")
 	implementation("net.imagej:ij:1.54i")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
