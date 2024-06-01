@@ -7,3 +7,6 @@ spring:
       max-request-size: 60MB
 ffmpeg:
   path-to-ffmpeg: "/usr/bin/ffmpeg"
+logging:
+  level:
+    org.springframework.web: DEBUG

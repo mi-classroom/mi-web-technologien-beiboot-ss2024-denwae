@@ -25,6 +25,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	implementation("org.bytedeco:javacv-platform:1.5.10")
 	implementation("net.imagej:ij:1.54i")
+	implementation("com.github.usefulness:webp-imageio:0.8.0")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

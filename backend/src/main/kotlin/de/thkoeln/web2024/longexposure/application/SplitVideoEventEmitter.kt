@@ -5,6 +5,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 class SplitVideoEventEmitter(private val emitter: SseEmitter) {
 
     fun emit(event: SplitVideoEvent) {
-        emitter.send(event)
+        emitter.send(SseEmitter.event()
+            .name(event.type.name)
+            .data(event)
+            .build()
+        )
     }
 }
