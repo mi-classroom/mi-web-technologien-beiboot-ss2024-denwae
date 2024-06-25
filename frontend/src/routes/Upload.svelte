@@ -57,6 +57,10 @@
         })
         blending = false
     }
+
+    function selectAllFrames() {
+        $selectedImages = $images.map(value => value.currentFrame)
+    }
 </script>
 
 <div class="drawer drawer-open">
@@ -80,6 +84,7 @@
                 {:else }
                     <button class="btn btn-primary" on:click={longExpose}>Langzeitbelichtungsbild erstellen</button>
                 {/if}
+                <button class="btn btn-primary" on:click={selectAllFrames}>Alle Frames auswählen</button>
             {/if}
         </div>
     </div>
