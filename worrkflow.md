@@ -114,6 +114,8 @@ The application can be tested locally by executing the docker compose file in th
 
 In order to run the current application run `docker compose up -d`. A new image will be build automatically.
 
+The application will be available under `localhost:8080`.
+
 ### Comments
 
 Comments should use a red, green logic in order to signal, if the comment is an optional nice to have, or has to be

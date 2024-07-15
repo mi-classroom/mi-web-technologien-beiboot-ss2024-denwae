@@ -1,5 +1,6 @@
 package de.thkoeln.web2024.longexposure.application
 
+import jakarta.servlet.http.HttpServletResponse
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -10,19 +11,27 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.util.UUID
+import java.util.logging.Logger
 
 @RestController
 class LongExposureController(
     private val applicationService: LongExposureApplicationService
 ) {
+    companion object {
+        val LOGGER: Logger = Logger.getLogger(LongExposureController::class.java.name)
+    }
 
     private val emitters = mutableMapOf<UUID, SseEmitter>()
 
     @PostMapping("/split-video/events", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun registerSplitVideoEventEmitter(@RequestParam(required = false) id: UUID?): SseEmitter {
-        return SseEmitter(0L).apply {
-            println("registerSplitVideoEventEmitter")
+    fun registerSplitVideoEventEmitter(
+        @RequestParam(required = false) id: UUID?,
+        response: HttpServletResponse
+    ): SseEmitter {
+        response.setHeader("X-Accel-Buffering", "no")
+        return SseEmitter(-1L).apply {
             val emitterId = UUID.randomUUID()
+            LOGGER.info("Registered SSE Emitter with id: $emitterId")
             emitters[emitterId] = this
             this.send(
                 SseEmitter.event()
@@ -53,7 +62,7 @@ class LongExposureController(
         return applicationService.blendImages(images.project, images.images)
     }
 
-    @GetMapping("/images/{project}/{img}", produces = ["image/webp"])
+    @GetMapping("/images/{project}/{img}", produces = ["image/png"])
     fun getImage(@PathVariable project: String, @PathVariable img: String): ResponseEntity<ByteArray> {
         return ok(applicationService.getImage(project, img))
     }
