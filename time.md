@@ -9,3 +9,4 @@
 | 2     | refactoring backend                       | 4                        |
 | 2     | implementing frontend                     | 10                       |
 | 3     | implementing weighting                    | 2.5                      |
+| 4     | Writing Workflow md                       | 1                        |
