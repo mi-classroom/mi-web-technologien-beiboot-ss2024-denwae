@@ -45,12 +45,13 @@ class LongExposureController(
 
     @OptIn(DelicateCoroutinesApi::class)
     @PostMapping("/split-video")
-    fun splitVideo(@RequestParam("file") file: MultipartFile, @RequestParam emitterId: UUID): ResponseEntity<UUID> {
+    fun splitVideo(@RequestParam("file") file: MultipartFile, @RequestParam emitterId: UUID, @RequestParam downSample: Boolean): ResponseEntity<UUID> {
         val projectId = UUID.randomUUID()
         GlobalScope.async {
             applicationService.splitVideo(
                 file,
                 projectId,
+                downSample,
                 emitters[emitterId] ?: throw RuntimeException("Emitter not found")
             )
         }
