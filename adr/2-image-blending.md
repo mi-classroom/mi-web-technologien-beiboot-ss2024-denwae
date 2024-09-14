@@ -13,7 +13,9 @@ The extracted frames must be blended. FFmpeg is not suitable for this use case t
 ## Decision Drivers <!-- optional -->
 
 * Ease of installation
+* Maintenance of tool
 * Ease of use
+* Documentation
 * Maintainability
 * Library/tool feature set
 
@@ -26,5 +28,18 @@ The extracted frames must be blended. FFmpeg is not suitable for this use case t
 
 ## Decision Outcome
 
-Chosen option: "ImageJ", because ImageMagick Java Bindings and OpenIMAJ are not maintained. AWT Graphics functions are designed for
-UI not image processing.
+Chosen option: "ImageJ", because it supports the necessary image blending with `ZProjector` and is still maintained.
+
+ImageMagick Java and Kotlin Bindings are not maintained ([JMagick](http://www.jmagick.org/) website is offline; [KMagick](https://github.com/MolotovCherry/kmagick) is on hold; [im4java](https://im4java.sourceforge.net/) last update 2012-27-12)
+OpenIMAJ is also not maintained ([Last commit](https://github.com/openimaj/openimaj) on 2022-02-09). AWT Graphics functions are designed for UI, not image processing.
+
+### Positive Consequences
+
+- No need to implement custom image blending
+- Better documentation than other options
+- Better maintained than other options
+
+### Negative Consequences
+
+- Spotty documentation
+- Few customization options
