@@ -10,3 +10,5 @@ ffmpeg:
 logging:
   level:
     org.springframework.web: DEBUG
+long-expose:
+  blend-batch-size: 50
