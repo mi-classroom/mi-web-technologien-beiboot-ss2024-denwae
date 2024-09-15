@@ -67,6 +67,4 @@ class LongExposureController(
     fun getImage(@PathVariable project: String, @PathVariable img: String): ResponseEntity<ByteArray> {
         return ok(applicationService.getImage(project, img))
     }
-
-
 }

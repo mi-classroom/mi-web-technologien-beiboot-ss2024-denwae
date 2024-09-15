@@ -27,6 +27,7 @@ dependencies {
 	implementation("net.imagej:ij:1.54h")
 	implementation("com.github.usefulness:webp-imageio:0.8.0")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("net.coobird:thumbnailator:0.4.20")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

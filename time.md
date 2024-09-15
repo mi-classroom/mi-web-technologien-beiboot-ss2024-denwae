@@ -10,4 +10,5 @@
 | 2                                 | implementing frontend                     | 10                       |
 | 3                                 | implementing weighting                    | 2.5                      |
 | 4                                 | Writing Workflow md                       | 1                        |
+| Bilderladen optimieren            | Implementation + research                 | 1                        |
 | Videoqualitätsoptionen hinzufügen | Implementing                              | 1                        |
