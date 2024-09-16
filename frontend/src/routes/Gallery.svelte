@@ -30,12 +30,23 @@
         }
     }
 
-    function toggleSelected(frameNumber){
+    function toggleSelected(frameNumber, event){
         if($selectedImages.includes(frameNumber)){
             $selectedImages = $selectedImages.filter(e => e !== frameNumber)
-        }else{
+        }else if(event.shiftKey){
+            let closest = $selectedImages.reduce(function(prev, curr) {
+                return (Math.abs(curr - frameNumber) < Math.abs(prev - frameNumber) ? curr : prev);
+            })
+            console.log(range(closest, frameNumber))
+            range(closest, frameNumber).forEach(frame => addFrames(frame))
+        }
+        else{
             addFrames(frameNumber)
         }
+    }
+
+    function range(start, end){
+        return [...Array(end - start).keys()].map(i => i + start + 1)
     }
 
     function addFrames(frame) {
@@ -59,7 +70,7 @@
         {#each $images as image, index}
             <div class:border-primary={$selectedImages.includes(image.currentFrame)} class="card card-bordered border-2 hover:border-4 flex overflow-hidden">
                 <div class="card-body p-0">
-                    <img src={image.imagePath} alt="frame" loading="lazy" on:click={() => toggleSelected(image.currentFrame)}/>
+                    <img src={image.imagePath} alt="frame" loading="lazy" on:click={event => toggleSelected(image.currentFrame, event)}/>
                     <label for="weight{index}">Gewichtung</label>
                     <input min="0" max={image.maxFrames} id="weight{index}" class="input" type="number" value="1" name="weighting" on:input={weight => updateWeights(image.currentFrame, parseInt(weight.target.value))}/>
                 </div>
