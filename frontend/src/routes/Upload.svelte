@@ -28,7 +28,6 @@
     async function uploadVideo() {
         const file = video.files[0]
         let formData = new FormData()
-        console.log($registered)
         formData.append("emitterId", $registered)
         formData.append("file", file)
         const response = await fetch("api/split-video", {
@@ -49,7 +48,7 @@
             },
             body: JSON.stringify({
                 project: $project,
-                images: $selectedImages
+                images: selectedImagesToFrameArray()
             })
         })
         await response.text().then(value => {
@@ -58,8 +57,14 @@
         blending = false
     }
 
+    function selectedImagesToFrameArray() {
+        return $selectedImages.flatMap(value =>
+            Array(value.weight).fill(value.currentFrame)
+        )
+    }
+
     function selectAllFrames() {
-        $selectedImages = $images.map(value => value.currentFrame)
+        $selectedImages = $images.map(value => value)
     }
 </script>
 
