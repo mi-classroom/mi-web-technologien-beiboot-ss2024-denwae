@@ -22,7 +22,9 @@ import kotlin.time.measureTime
 
 
 @Service
-class LongExposureDomainService {
+class LongExposureDomainService(
+    val longExposureSettings: LongExposureSettings
+) {
 
     private val logger: Logger = Logger.getLogger(LongExposureDomainService::class.java.name)
     private val ffmpeg: String = Loader.load(org.bytedeco.ffmpeg.ffmpeg::class.java)
@@ -42,7 +44,8 @@ class LongExposureDomainService {
             eventEmitter.emit(SplitVideoEvent(EventType.STARTED, maxFrames, -1))
             for(i in 1..frameGrabber.lengthInVideoFrames) {
                 logger.info("Extracting frame $i")
-
+                Files.createDirectories(Paths.get(projectPath))
+                Files.createDirectories(Paths.get("$projectPath/batched"))
                 val imagePath = "$projectPath/$i.png"
 
                 ImageIO.write(
@@ -73,19 +76,36 @@ class LongExposureDomainService {
 
     fun blendImages(project: UUID, images: List<Int>): String {
         logger.info("Merging ${images.size} images")
-        val imagePath = "./images/$project/blended.png"
+        val projectPath = "./images/$project"
+        val imagePath = "$projectPath/blended.png"
         val duration = measureTime {
-            val imageStack = ImageStack()
-            images.forEach {
-                imageStack.addSlice(ColorProcessor(ImageIO.read(File("./images/$project/$it.png"))))
+            val batchedPath = "$projectPath/batched"
+            var batch = 1
+            images.chunked(longExposureSettings.blendBatchSize) {
+                logger.info("Blending batch $batch")
+                blend("$batchedPath/blended$batch.png", projectPath, it.map { image -> "$image.png" })
+                batch++
             }
-            ImageIO.write(
-                ZProjector.run(ImagePlus("longExpose", imageStack), "avg").bufferedImage,
-                "png",
-                File(imagePath)
-            )
+            logger.info("Blending final image")
+            blend("$projectPath/blended.png", batchedPath, getBlendedImagesPaths(batchedPath))
         }
         logger.info("Merged images in $duration")
         return imagePath
+    }
+
+    private fun getBlendedImagesPaths(imagePath: String): List<String> {
+        return File(imagePath).listFiles()?.map { it.name } ?: throw RuntimeException("No directory with this path")
+    }
+
+    private fun blend(imagePath: String, projectPath: String, images: List<String>){
+        val imageStack = ImageStack()
+        images.forEach {
+            imageStack.addSlice(ColorProcessor(ImageIO.read(File("$projectPath/$it"))))
+        }
+        ImageIO.write(
+            ZProjector.run(ImagePlus("longExpose", imageStack), "avg").bufferedImage,
+            "png",
+            File(imagePath)
+        )
     }
 }
