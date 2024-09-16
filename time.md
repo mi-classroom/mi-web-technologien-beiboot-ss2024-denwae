@@ -11,3 +11,4 @@
 | 3                      | implementing weighting                    | 2.5                      |
 | 4                      | Writing Workflow md                       | 1                        |
 | Bilderladen optimieren | Implementation + research                 | 1                        |
+| Image Blending Batchen | Implementation                            | 1                        |
