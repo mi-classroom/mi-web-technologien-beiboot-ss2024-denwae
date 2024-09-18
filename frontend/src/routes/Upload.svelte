@@ -66,6 +66,10 @@
     function selectAllFrames() {
         $selectedImages = $images.map(value => value)
     }
+
+    function deselectAllFrames() {
+        $selectedImages = []
+    }
 </script>
 
 <div class="drawer drawer-open">
@@ -89,7 +93,11 @@
                 {:else }
                     <button class="btn btn-primary" on:click={longExpose}>Langzeitbelichtungsbild erstellen</button>
                 {/if}
-                <button class="btn btn-primary" on:click={selectAllFrames}>Alle Frames auswählen</button>
+                {#if $selectedImages.length < $images.length}
+                    <button class="btn btn-primary" on:click={selectAllFrames}>Alle Frames auswählen</button>
+                {:else }
+                    <button class="btn btn-primary" on:click={deselectAllFrames}>Alle Frames abwählen</button>
+                {/if}
             {/if}
         </div>
     </div>
