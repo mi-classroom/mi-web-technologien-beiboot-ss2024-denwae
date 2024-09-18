@@ -99,6 +99,22 @@
                     <button class="btn btn-primary" on:click={deselectAllFrames}>Alle Frames abwählen</button>
                 {/if}
             {/if}
+            <div class="hero bg-base-200">
+                <div class="hero-content text-center">
+                    <div class="max-w-md">
+                        <h1 class="text-3xl font-bold">Anleitung</h1>
+                        <p class="py-2">
+                            Dieses Tool erlaubt es Videos hochzuladen und daraus <a href="https://de.wikipedia.org/wiki/Langzeitbelichtung">Langzeitbelichtungsbilder</a> zu erstellen.
+                        </p>
+                        <p class="py-2">
+                            Zum Auswählen von Bildern kann der Knopf oben genutzt werden, um alle Bilder aus- oder abzuwählen. Mit einem Klick auf ein Bild können einzelne Bilder ausgewählt werden.
+                        </p>
+                        <p class="py-2">
+                            Wenn <kbd class="kbd">Shift</kbd> gedrückt gehalten wird dann kann eine Serie von Bildern ausgewählt werden. Die Serie beginnt immer beim nächsten bereits ausgewähltem Bild und endet beim angeklickten Bild.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
