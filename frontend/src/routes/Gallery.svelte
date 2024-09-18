@@ -33,9 +33,7 @@
         if($selectedImages.includes(image)){
             $selectedImages = $selectedImages.filter(e => e !== image)
         }else if(event.shiftKey){
-            let closest = $selectedImages.map(selected => selected.currentFrame).reduce(function(prev, curr) {
-                return (Math.abs(curr - image.currentFrame) < Math.abs(prev - image) ? curr : prev);
-            })
+            let closest = findClosest(image.currentFrame, $selectedImages)
             range(closest, image.currentFrame).forEach(frame => {
                 $selectedImages = [...$selectedImages, $images.find(img => img.currentFrame === frame)]
             })
@@ -44,6 +42,10 @@
         else{
             $selectedImages = [...$selectedImages, image]
         }
+    }
+
+    function findClosest(number, array){
+        return  array.map(image => image.currentFrame).sort( (a, b) => Math.abs(number - a) - Math.abs(number - b))[0]
     }
 
     function range(num1, num2){
