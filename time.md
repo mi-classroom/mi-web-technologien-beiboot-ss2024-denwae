@@ -12,4 +12,5 @@
 | 4                                    | Writing Workflow md                       | 1                        |
 | Bilderladen optimieren               | Implementation + research                 | 1                        |
 | Image Blending Batchen               | Implementation                            | 1                        |
+| Videoqualitätsoptionen hinzufügen    | Implementation                            | 1                        |
 | Besseren Image select implementieren | Implementation + Refactoring              | 2                        |
