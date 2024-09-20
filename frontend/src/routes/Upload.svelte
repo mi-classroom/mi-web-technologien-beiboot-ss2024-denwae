@@ -6,6 +6,7 @@
     let splitting = false;
     let maxFrame = 100
     let currentFrame = 0
+    let downSample = true;
 
 
     frame.subscribe(value => {
@@ -30,6 +31,7 @@
         let formData = new FormData()
         console.log($registered)
         formData.append("emitterId", $registered)
+        formData.append("downSample", downSample.toString())
         formData.append("file", file)
         const response = await fetch("api/split-video", {
             method: "POST",
@@ -71,6 +73,15 @@
             <!-- Sidebar content here -->
             <label for="video">Video hochladen</label>
             <input id="video" name="file" type="file" class="file-input w-full max-w-xs" bind:this={video}/>
+            <div class="tooltip" data-tip="Die Horizontale Auflösung wird auf 1280p reduziert. Das Seitenverhältnis wird beibehalten.">
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">Mit verringerter Auflösung verarbeiten</span>
+                        <span class="badge badge-primary badge-outline mr-2">?</span>
+                        <input type="checkbox" class="checkbox checkbox-primary" bind:checked={downSample}/>
+                    </label>
+                </div>
+            </div>
             <div>
                 {#if !splitting}
                     <button class="btn btn-primary" on:click={uploadVideo}>Video aufteilen</button>

@@ -7,12 +7,11 @@ import ij.ImagePlus
 import ij.ImageStack
 import ij.plugin.ZProjector
 import ij.process.ColorProcessor
+import org.bytedeco.javacpp.Loader
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
 import org.springframework.stereotype.Service
-import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -28,20 +27,26 @@ class LongExposureDomainService(
 ) {
 
     private val logger: Logger = Logger.getLogger(LongExposureDomainService::class.java.name)
+    private val ffmpeg: String = Loader.load(org.bytedeco.ffmpeg.ffmpeg::class.java)
 
-    fun splitVideo(video: ByteArrayInputStream, eventEmitter: SplitVideoEventEmitter, project: UUID) {
-        val frameGrabber = FFmpegFrameGrabber(video)
+
+    fun splitVideo(video: ByteArrayInputStream, downSample: Boolean, eventEmitter: SplitVideoEventEmitter, project: UUID) {
+        val projectPath = "./images/$project"
+        Files.createDirectories(Paths.get(projectPath))
+        val convertedVideoPath = "$projectPath/convertedVideo.mp4"
+        convertVideo(video, "$projectPath/originalVideo", convertedVideoPath, downSample)
+        val convertedVideo = ByteArrayInputStream(File(convertedVideoPath).readBytes())
+        val frameGrabber = FFmpegFrameGrabber(convertedVideo)
         logger.info("Extracting frames")
         val durationExtract = measureTime {
             frameGrabber.start()
             val maxFrames = frameGrabber.lengthInVideoFrames
             eventEmitter.emit(SplitVideoEvent(EventType.STARTED, maxFrames, -1))
-
             for(i in 1..frameGrabber.lengthInVideoFrames) {
                 logger.info("Extracting frame $i")
-                Files.createDirectories(Paths.get("./images/$project"))
-                Files.createDirectories(Paths.get("./images/$project/batched"))
-                val imagePath = "./images/$project/$i.png"
+                Files.createDirectories(Paths.get(projectPath))
+                Files.createDirectories(Paths.get("$projectPath/batched"))
+                val imagePath = "$projectPath/$i.png"
 
                 ImageIO.write(
                     Java2DFrameConverter().convert(frameGrabber.grabImage()) ,
@@ -54,6 +59,19 @@ class LongExposureDomainService(
             eventEmitter.emit(SplitVideoEvent(EventType.FINISHED, maxFrames, -1))
         }
         logger.info("Finished extracting frames in $durationExtract")
+    }
+
+    private fun convertVideo(video: ByteArrayInputStream, originalVideoPath: String, convertedVideoPath: String, downSample: Boolean) {
+        val videoFile = File(originalVideoPath)
+        videoFile.writeBytes(video.readBytes())
+        val pb = if (downSample) {
+            logger.info("Converting video with reduced resolution")
+            ProcessBuilder(ffmpeg, "-i", originalVideoPath, "-filter:v", "scale=1280:-1", "-vcodec", "h264", convertedVideoPath)
+        }else {
+            logger.info("Converting video with full resolution")
+            ProcessBuilder(ffmpeg, "-i", originalVideoPath, "-vcodec", "h264", convertedVideoPath)
+        }
+        pb.inheritIO().start().waitFor()
     }
 
     fun blendImages(project: UUID, images: List<Int>): String {
@@ -90,10 +108,4 @@ class LongExposureDomainService(
             File(imagePath)
         )
     }
-}
-
-fun BufferedImage.toByteArray(): ByteArray {
-    val byteArrayOutputStream = ByteArrayOutputStream()
-    ImageIO.write(this , "png", byteArrayOutputStream)
-    return byteArrayOutputStream.toByteArray()
 }
