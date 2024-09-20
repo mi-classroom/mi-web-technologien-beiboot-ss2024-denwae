@@ -10,7 +10,8 @@ export default defineConfig({
 				changeOrigin: true,
 				rewrite: (path) => path.replace(/^\/api/, '')
 			},
-			'/images': 'http://localhost:8080'
+			'/images': 'http://localhost:8080',
+			'/thumb': 'http://localhost:8080'
 		}
 	},
 	build: {

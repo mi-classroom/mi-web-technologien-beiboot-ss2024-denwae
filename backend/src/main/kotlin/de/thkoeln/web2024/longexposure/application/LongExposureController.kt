@@ -67,4 +67,9 @@ class LongExposureController(
     fun getImage(@PathVariable project: String, @PathVariable img: String): ResponseEntity<ByteArray> {
         return ok(applicationService.getImage(project, img))
     }
+
+    @GetMapping("/thumb/{project}/{img}", produces = ["image/png"])
+    fun getThumbnail(@PathVariable project: String, @PathVariable img: String): ResponseEntity<ByteArray> {
+        return ok(applicationService.getThumb(project, img))
+    }
 }
