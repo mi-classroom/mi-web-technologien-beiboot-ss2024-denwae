@@ -9,7 +9,7 @@
     let currentFrame = 0
     let downSample = true;
     let converting = false;
-
+    let uploadErr = false
 
     frame.subscribe(value => {
         if(value)
@@ -37,12 +37,19 @@
         formData.append("emitterId", $registered)
         formData.append("downSample", downSample.toString())
         formData.append("file", file)
-        const response = await fetch("api/split-video", {
-            method: "POST",
-            body: formData,
-        })
-        const projectId = await response.json();
-        project.set(projectId)
+        try {
+            const response = await fetch("api/split-video", {
+                method: "POST",
+                body: formData,
+            })
+            const projectId = await response.json();
+            project.set(projectId)
+        }catch (err){
+            console.log(err)
+            uploadErr = true
+            converting = false
+            setTimeout(() => uploadErr = false, 5000)
+        }
     }
 
     let blending = false
@@ -82,6 +89,14 @@
         return $images.length > 0
     }
 </script>
+
+{#if uploadErr}
+    <div class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span>Fehler beim upload.</span>
+        </div>
+    </div>
+{/if}
 
 <div class="drawer drawer-open">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
