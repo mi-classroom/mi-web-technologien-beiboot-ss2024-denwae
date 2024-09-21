@@ -8,7 +8,6 @@
     let currentFrame = 0
     let downSample = true;
 
-
     frame.subscribe(value => {
         if(value)
             currentFrame = value.currentFrame

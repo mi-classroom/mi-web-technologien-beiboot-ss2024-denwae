@@ -23,16 +23,36 @@ class LongExposureController(
 
     private val emitters = mutableMapOf<UUID, SseEmitter>()
 
+    @PostMapping("/split-video/events/{emitterId}/ping", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun ssePing(
+        @PathVariable emitterId: UUID,
+        response: HttpServletResponse
+    ) {
+        response.setHeader("X-Accel-Buffering", "no")
+        LOGGER.info("Received ping for emitter with id $emitterId")
+        emitters[emitterId]?.send(
+            SseEmitter.event()
+                .name("ping")
+                .id("ping")
+                .data("Received")
+                .build()
+        ) ?: throw RuntimeException("No Emitter with this id")
+    }
+
     @PostMapping("/split-video/events", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     fun registerSplitVideoEventEmitter(
         @RequestParam(required = false) id: UUID?,
         response: HttpServletResponse
     ): SseEmitter {
         response.setHeader("X-Accel-Buffering", "no")
-        return SseEmitter(-1L).apply {
+        return SseEmitter(1000 * 60 * 60).apply {
             val emitterId = UUID.randomUUID()
             LOGGER.info("Registered SSE Emitter with id: $emitterId")
             emitters[emitterId] = this
+            this.onCompletion{
+                emitters.remove(emitterId)
+                LOGGER.info("Removing SSE Emitter with id $emitterId")
+            }
             this.send(
                 SseEmitter.event()
                     .name("registered")
