@@ -8,6 +8,7 @@
     let maxFrame = 100
     let currentFrame = 0
     let downSample = true;
+    let converting = false;
 
 
     frame.subscribe(value => {
@@ -17,7 +18,7 @@
 
     started.subscribe(value => {
         if (value){
-            images.set([])
+            converting = false
             splitting = true
             maxFrame = value.maxFrame
         }
@@ -28,6 +29,9 @@
     })
 
     async function uploadVideo() {
+        converting = true
+        $images = []
+        $selectedImages = []
         const file = video.files[0]
         let formData = new FormData()
         formData.append("emitterId", $registered)
@@ -96,9 +100,11 @@
                     </label>
                 </div>
             </div>
-            {#if !splitting}
+            {#if !splitting && !converting}
                 <button class="btn btn-primary" on:click={uploadVideo} disabled={!hasVideo}>Video aufteilen</button>
-            {:else }
+            {:else if (converting && !splitting)}
+                <progress class="progress"></progress>
+            {:else}
                 <progress class="progress" value={currentFrame} max={maxFrame}>Video wird aufgeteilt</progress>
             {/if}
             {#if blending}
