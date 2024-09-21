@@ -8,6 +8,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -25,9 +27,12 @@ class LongExposureApplicationService(
     }
 
     fun getImage(project: String, img: String): ByteArray {
-        return Thumbnails.of("./images/$project/$img").size(300, 300).asBufferedImage().toByteArray()
+        return Files.readAllBytes(Paths.get("./images/$project/$img"))
     }
 
+    fun getThumb(project: String, img: String): ByteArray {
+        return Thumbnails.of("./images/$project/$img").size(300, 300).asBufferedImage().toByteArray()
+    }
 }
 
 fun BufferedImage.toByteArray(): ByteArray {

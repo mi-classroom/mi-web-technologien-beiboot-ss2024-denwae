@@ -1,6 +1,10 @@
 import {source} from "sveltekit-sse";
 
-const sseConnection = source("/api/split-video/events");
+const sseConnection = source("/api/split-video/events", {
+  close({connect}) {
+    connect()
+  }
+});
 
 export const started = sseConnection.select("STARTED").json(function or({error, raw, previous}){
     if(raw !== "")

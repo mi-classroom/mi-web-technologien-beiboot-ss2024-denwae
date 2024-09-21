@@ -15,3 +15,4 @@
 | Videoqualitätsoptionen hinzufügen    | Implementation                            | 1                        |
 | Besseren Image select implementieren | Implementation + Refactoring              | 2                        |
 | Workflow verbessern                  | Implementation                            | 1                        |
+| Frontend Blended Image Layout fixen  | Implementation + Docker fix               | 2                        |

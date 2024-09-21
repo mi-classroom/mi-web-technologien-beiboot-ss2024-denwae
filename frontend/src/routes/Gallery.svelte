@@ -57,23 +57,25 @@
 </script>
 
 <div class="grid-rows-2">
-    {#if $blendedImage}
-        <div class="hero">
-            <div class="hero-content">
-                <img src={$blendedImage} alt="blended image" loading="lazy"/>
-            </div>
-        </div>
-    {/if}
-    <div class="grid grid-cols-6 gap-2 overflow-auto max-h-screen">
-        {#each $images as image, index}
-            <div class:border-primary={$selectedImages.includes(image)} class="card card-bordered border-2 hover:border-4 flex overflow-hidden">
-                <div class="card-body p-0">
-                    <img src={image.imagePath} alt="frame" loading="lazy" on:click={event => toggleSelected(image, event)}/>
-                    <label for="weight{index}">Gewichtung</label>
-                    <input min="0" max={image.maxFrames} id="weight{index}" class="input" type="number" value="1" name="weighting" on:input={weight => updateWeights(image, parseInt(weight.target.value))}/>
+    <div class="overflow-auto max-h-screen">
+        {#if $blendedImage}
+            <div class="hero">
+                <div class="hero-content">
+                    <img src={$blendedImage} alt="blended image" loading="lazy"/>
                 </div>
             </div>
-        {/each}
+        {/if}
+        <div class="grid grid-cols-6 gap-2">
+            {#each $images as image, index}
+                <div class:border-primary={$selectedImages.includes(image)} class="card card-bordered border-2 hover:border-4 flex overflow-hidden">
+                    <div class="card-body p-0">
+                        <img src={image.imagePath} alt="frame" loading="lazy" on:click={event => toggleSelected(image, event)}/>
+                        <label for="weight{index}">Gewichtung</label>
+                        <input min="0" max={image.maxFrames} id="weight{index}" class="input" type="number" value="1" name="weighting" on:input={weight => updateWeights(image, parseInt(weight.target.value))}/>
+                    </div>
+                </div>
+            {/each}
+        </div>
     </div>
 </div>
 
