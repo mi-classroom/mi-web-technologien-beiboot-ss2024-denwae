@@ -110,7 +110,7 @@
             {#if blending}
                 <progress class="progress"></progress>
             {:else }
-                <button class="btn btn-primary" on:click={longExpose} disabled={(!framesExist() || splitting)}>Langzeitbelichtungsbild erstellen</button>
+                <button class="btn btn-primary" on:click={longExpose} disabled={($selectedImages.length <= 0 || splitting)}>Langzeitbelichtungsbild erstellen</button>
             {/if}
             {#if $selectedImages.length < $images.length}
                 <button class="btn btn-primary" on:click={selectAllFrames} disabled={splitting || !framesExist()}>Alle Frames auswählen</button>
