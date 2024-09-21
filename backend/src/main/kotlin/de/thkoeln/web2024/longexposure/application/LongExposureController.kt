@@ -1,7 +1,6 @@
 package de.thkoeln.web2024.longexposure.application
 
 import jakarta.servlet.http.HttpServletResponse
-import jakarta.websocket.server.PathParam
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -46,7 +45,7 @@ class LongExposureController(
         response: HttpServletResponse
     ): SseEmitter {
         response.setHeader("X-Accel-Buffering", "no")
-        return SseEmitter(60000L).apply {
+        return SseEmitter(1000 * 60 * 60).apply {
             val emitterId = UUID.randomUUID()
             LOGGER.info("Registered SSE Emitter with id: $emitterId")
             emitters[emitterId] = this

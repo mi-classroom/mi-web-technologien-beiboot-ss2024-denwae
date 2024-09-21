@@ -7,26 +7,6 @@
     let maxFrame = 100
     let currentFrame = 0
     let downSample = true;
-    let intervalId
-
-    registered.subscribe(data =>{
-            if(intervalId !== undefined)
-                clearInterval(intervalId)
-            intervalId = setInterval(() => ssePing(data), 50000)
-        }
-    )
-
-    async function ssePing(data) {
-        console.log(data)
-
-        if(data !== undefined && data !== ""){
-            const res = await fetch(`/api/split-video/events/${data}/ping`, {
-                method: 'POST'
-            })
-            if(!res.ok)
-                clearInterval(intervalId)
-        }
-    }
 
     frame.subscribe(value => {
         if(value)
