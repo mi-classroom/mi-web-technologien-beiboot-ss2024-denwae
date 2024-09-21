@@ -3,6 +3,7 @@
     import {registered, started, finished, frame} from "./sseConnection.js";
 
     let video;
+    let hasVideo = null
     let splitting = false;
     let maxFrame = 100
     let currentFrame = 0
@@ -85,7 +86,7 @@
         <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content space-y-2">
             <!-- Sidebar content here -->
             <label for="video">Video hochladen</label>
-            <input id="video" name="file" type="file" class="file-input w-full max-w-xs" bind:this={video}/>
+            <input id="video" name="file" type="file" class="file-input w-full max-w-xs" bind:this={video} bind:value={hasVideo}/>
             <div class="tooltip" data-tip="Die Horizontale Auflösung wird auf 1280p reduziert. Das Seitenverhältnis wird beibehalten.">
                 <div class="form-control">
                     <label class="label cursor-pointer">
@@ -96,7 +97,7 @@
                 </div>
             </div>
             {#if !splitting}
-                <button class="btn btn-primary" on:click={uploadVideo}>Video aufteilen</button>
+                <button class="btn btn-primary" on:click={uploadVideo} disabled={!hasVideo}>Video aufteilen</button>
             {:else }
                 <progress class="progress" value={currentFrame} max={maxFrame}>Video wird aufgeteilt</progress>
             {/if}
