@@ -53,7 +53,7 @@ class LongExposureDomainService(
                     "png",
                     File(imagePath)
                 )
-                eventEmitter.emit(SplitVideoEvent(EventType.SPLIT, maxFrames, i, imagePath))
+                eventEmitter.emit(SplitVideoEvent(EventType.SPLIT, maxFrames, i, "./thumb/$project/$i.png"))
             }
             frameGrabber.stop()
             eventEmitter.emit(SplitVideoEvent(EventType.FINISHED, maxFrames, -1))

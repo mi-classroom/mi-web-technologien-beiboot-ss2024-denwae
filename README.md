@@ -48,7 +48,7 @@ Es ist am einfachsten die Anwendung per Docker Compose auszuführen. Dafür muss
 docker compose up -d
 ```
 
-Das Frontend ist unter http://localhost:8080 erreichbar. Das Backend kann nur über Docker erreicht werden.
+Das Frontend ist unter http://localhost:5173 erreichbar. Das Backend kann nur über http://localhost:8080 erreicht werden.
 
 ## Local
 
