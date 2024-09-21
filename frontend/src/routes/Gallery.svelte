@@ -15,7 +15,7 @@
                 weight: 1
             }
             $images = [...$images, image]
-            $selectedImages= [...$selectedImages, {currentFrame: image.currentFrame, weight: image.weight}]
+            $selectedImages= [...$selectedImages, image]
         }
     })
 
