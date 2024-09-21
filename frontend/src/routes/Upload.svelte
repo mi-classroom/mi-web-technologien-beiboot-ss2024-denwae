@@ -43,6 +43,7 @@
     let blending = false
     async function longExpose() {
         blending = true
+        $blendedImage = null
         const response = await fetch("api/blend-images", {
             method: "POST",
             headers: {
