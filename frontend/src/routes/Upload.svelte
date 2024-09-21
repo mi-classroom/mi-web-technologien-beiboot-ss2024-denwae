@@ -3,10 +3,13 @@
     import {registered, started, finished, frame} from "./sseConnection.js";
 
     let video;
+    let hasVideo = null
     let splitting = false;
     let maxFrame = 100
     let currentFrame = 0
     let downSample = true;
+    let converting = false;
+    let uploadErr = false
 
     frame.subscribe(value => {
         if(value)
@@ -15,7 +18,7 @@
 
     started.subscribe(value => {
         if (value){
-            images.set([])
+            converting = false
             splitting = true
             maxFrame = value.maxFrame
         }
@@ -26,17 +29,27 @@
     })
 
     async function uploadVideo() {
+        converting = true
+        $images = []
+        $selectedImages = []
         const file = video.files[0]
         let formData = new FormData()
         formData.append("emitterId", $registered)
         formData.append("downSample", downSample.toString())
         formData.append("file", file)
-        const response = await fetch("api/split-video", {
-            method: "POST",
-            body: formData,
-        })
-        const projectId = await response.json();
-        project.set(projectId)
+        try {
+            const response = await fetch("api/split-video", {
+                method: "POST",
+                body: formData,
+            })
+            const projectId = await response.json();
+            project.set(projectId)
+        }catch (err){
+            console.log(err)
+            uploadErr = true
+            converting = false
+            setTimeout(() => uploadErr = false, 5000)
+        }
     }
 
     let blending = false
@@ -72,7 +85,19 @@
     function deselectAllFrames() {
         $selectedImages = []
     }
+
+    function framesExist(){
+        return $images.length > 0
+    }
 </script>
+
+{#if uploadErr}
+    <div class="toast toast-top toast-end">
+        <div class="alert alert-error">
+            <span>Fehler beim upload.</span>
+        </div>
+    </div>
+{/if}
 
 <div class="drawer drawer-open">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
@@ -81,7 +106,7 @@
         <div class="menu p-4 w-80 min-h-full bg-base-200 text-base-content space-y-2">
             <!-- Sidebar content here -->
             <label for="video">Video hochladen</label>
-            <input id="video" name="file" type="file" class="file-input w-full max-w-xs" bind:this={video}/>
+            <input id="video" name="file" type="file" class="file-input w-full max-w-xs" bind:this={video} bind:value={hasVideo}/>
             <div class="tooltip" data-tip="Die Horizontale Auflösung wird auf 1280p reduziert. Das Seitenverhältnis wird beibehalten.">
                 <div class="form-control">
                     <label class="label cursor-pointer">
@@ -91,24 +116,22 @@
                     </label>
                 </div>
             </div>
-            <div>
-                {#if !splitting}
-                    <button class="btn btn-primary" on:click={uploadVideo}>Video aufteilen</button>
-                {:else }
-                    <progress class="progress" value={currentFrame} max={maxFrame}>Video wird aufgeteilt</progress>
-                {/if}
-            </div>
-            {#if !$images.isEmpty}
-                {#if blending}
-                    <progress class="progress"></progress>
-                {:else }
-                    <button class="btn btn-primary" on:click={longExpose}>Langzeitbelichtungsbild erstellen</button>
-                {/if}
-                {#if $selectedImages.length < $images.length}
-                    <button class="btn btn-primary" on:click={selectAllFrames}>Alle Frames auswählen</button>
-                {:else }
-                    <button class="btn btn-primary" on:click={deselectAllFrames}>Alle Frames abwählen</button>
-                {/if}
+            {#if !splitting && !converting}
+                <button class="btn btn-primary" on:click={uploadVideo} disabled={!hasVideo}>Video aufteilen</button>
+            {:else if (converting && !splitting)}
+                <progress class="progress"></progress>
+            {:else}
+                <progress class="progress" value={currentFrame} max={maxFrame}>Video wird aufgeteilt</progress>
+            {/if}
+            {#if blending}
+                <progress class="progress"></progress>
+            {:else }
+                <button class="btn btn-primary" on:click={longExpose} disabled={($selectedImages.length <= 0 || splitting)}>Langzeitbelichtungsbild erstellen</button>
+            {/if}
+            {#if $selectedImages.length < $images.length}
+                <button class="btn btn-primary" on:click={selectAllFrames} disabled={splitting || !framesExist()}>Alle Frames auswählen</button>
+            {:else }
+                <button class="btn btn-primary" on:click={deselectAllFrames} disabled={splitting || !framesExist()}>Alle Frames abwählen</button>
             {/if}
             <div class="hero bg-base-200">
                 <div class="hero-content text-center">

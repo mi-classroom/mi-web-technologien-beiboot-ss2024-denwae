@@ -38,18 +38,19 @@ class LongExposureDomainService(
         val convertedVideo = ByteArrayInputStream(File(convertedVideoPath).readBytes())
         val frameGrabber = FFmpegFrameGrabber(convertedVideo)
         logger.info("Extracting frames")
+        val converter = Java2DFrameConverter()
         val durationExtract = measureTime {
             frameGrabber.start()
             val maxFrames = frameGrabber.lengthInVideoFrames
             eventEmitter.emit(SplitVideoEvent(EventType.STARTED, maxFrames, -1))
-            for(i in 1..frameGrabber.lengthInVideoFrames) {
+            for(i in 1..<maxFrames) {
                 logger.info("Extracting frame $i")
                 Files.createDirectories(Paths.get(projectPath))
                 Files.createDirectories(Paths.get("$projectPath/batched"))
                 val imagePath = "$projectPath/$i.png"
 
                 ImageIO.write(
-                    Java2DFrameConverter().convert(frameGrabber.grabImage()) ,
+                    converter.convert(frameGrabber.grabImage()) ,
                     "png",
                     File(imagePath)
                 )

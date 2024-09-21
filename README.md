@@ -80,4 +80,4 @@ Für das Frontend wird [Node >= 18.13](https://nodejs.org/en/download/package-ma
 
 Das Frontend wird über NPM gestartet. Im `frontend` Ordner müssen die Dependencies mit `npm install`installiert werden. Danach kann das Frontend mit `npm run dev` gestartet werden.
 
-Das Frontend ist unter http://localhost:8080 zu erreichen.
+Das Frontend ist unter http://localhost:5173 zu erreichen.
