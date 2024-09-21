@@ -72,6 +72,10 @@
     function deselectAllFrames() {
         $selectedImages = []
     }
+
+    function framesExist(){
+        return $images.length > 0
+    }
 </script>
 
 <div class="drawer drawer-open">
@@ -91,24 +95,20 @@
                     </label>
                 </div>
             </div>
-            <div>
-                {#if !splitting}
-                    <button class="btn btn-primary" on:click={uploadVideo}>Video aufteilen</button>
-                {:else }
-                    <progress class="progress" value={currentFrame} max={maxFrame}>Video wird aufgeteilt</progress>
-                {/if}
-            </div>
-            {#if !$images.isEmpty}
-                {#if blending}
-                    <progress class="progress"></progress>
-                {:else }
-                    <button class="btn btn-primary" on:click={longExpose}>Langzeitbelichtungsbild erstellen</button>
-                {/if}
-                {#if $selectedImages.length < $images.length}
-                    <button class="btn btn-primary" on:click={selectAllFrames}>Alle Frames auswählen</button>
-                {:else }
-                    <button class="btn btn-primary" on:click={deselectAllFrames}>Alle Frames abwählen</button>
-                {/if}
+            {#if !splitting}
+                <button class="btn btn-primary" on:click={uploadVideo}>Video aufteilen</button>
+            {:else }
+                <progress class="progress" value={currentFrame} max={maxFrame}>Video wird aufgeteilt</progress>
+            {/if}
+            {#if blending}
+                <progress class="progress"></progress>
+            {:else }
+                <button class="btn btn-primary" on:click={longExpose} disabled={(!framesExist() || splitting)}>Langzeitbelichtungsbild erstellen</button>
+            {/if}
+            {#if $selectedImages.length < $images.length}
+                <button class="btn btn-primary" on:click={selectAllFrames} disabled={splitting || !framesExist()}>Alle Frames auswählen</button>
+            {:else }
+                <button class="btn btn-primary" on:click={deselectAllFrames} disabled={splitting || !framesExist()}>Alle Frames abwählen</button>
             {/if}
             <div class="hero bg-base-200">
                 <div class="hero-content text-center">
