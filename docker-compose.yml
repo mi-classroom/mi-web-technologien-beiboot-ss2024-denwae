@@ -1,7 +1,7 @@
 name: lep
 services:
   frontend:
-    pull_policy: build
+    image: ghcr.io/denwae/lep-frontend:latest
     build:
       context: .
       dockerfile: frontend.Dockerfile
@@ -14,7 +14,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template
   backend:
-    pull_policy: build
+    image: ghcr.io/denwae/lep-backend:latest
     build:
       context: .
       dockerfile: backend.Dockerfile

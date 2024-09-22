@@ -48,6 +48,12 @@ Es ist am einfachsten die Anwendung per Docker Compose auszuführen. Dafür muss
 docker compose up -d
 ```
 
+Alternativ können die Imagtes zuerst gebaut werden:
+
+```
+docker compose up -d --build
+```
+
 Das Frontend ist unter http://localhost:5173 erreichbar. Das Backend kann nur über http://localhost:8080 erreicht werden.
 
 ## Local
