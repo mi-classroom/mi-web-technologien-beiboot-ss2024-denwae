@@ -46,7 +46,6 @@ class LongExposureDomainService(
             for(i in 1..<maxFrames) {
                 logger.info("Extracting frame $i")
                 Files.createDirectories(Paths.get(projectPath))
-                Files.createDirectories(Paths.get("$projectPath/batched"))
                 val imagePath = "$projectPath/$i.png"
 
                 ImageIO.write(
@@ -78,17 +77,19 @@ class LongExposureDomainService(
     fun blendImages(project: UUID, images: List<Int>): String {
         logger.info("Merging ${images.size} images")
         val projectPath = "./images/$project"
-        val imagePath = "$projectPath/blended.png"
+        val imagePath = "$projectPath/blended-${UUID.randomUUID()}.png"
         val duration = measureTime {
             val batchedPath = "$projectPath/batched"
+            deleteFolderContent(batchedPath)
+            Files.createDirectories(Paths.get(batchedPath))
             var batch = 1
             images.chunked(longExposureSettings.blendBatchSize) {
                 logger.info("Blending batch $batch")
-                blend("$batchedPath/blended$batch.png", projectPath, it.map { image -> "$image.png" })
+                blend("$batchedPath/blended-$batch.png", projectPath, it.map { image -> "$image.png" })
                 batch++
             }
             logger.info("Blending final image")
-            blend("$projectPath/blended.png", batchedPath, getBlendedImagesPaths(batchedPath))
+            blend(imagePath, batchedPath, getBlendedImagesPaths(batchedPath))
         }
         logger.info("Merged images in $duration")
         return imagePath
@@ -96,6 +97,18 @@ class LongExposureDomainService(
 
     private fun getBlendedImagesPaths(imagePath: String): List<String> {
         return File(imagePath).listFiles()?.map { it.name } ?: throw RuntimeException("No directory with this path")
+    }
+
+    private fun deleteFolderContent(path: String) {
+        val file = File(path)
+            file.listFiles()?.forEach {
+            if (it.isDirectory) {
+                deleteFolderContent(it.path)
+            } else {
+                it.delete()
+            }
+        }
+        file.delete()
     }
 
     private fun blend(imagePath: String, projectPath: String, images: List<String>){
